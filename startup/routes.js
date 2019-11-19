@@ -1,6 +1,5 @@
 const express = require("express");
 
-const testing = require("../routes/testing");
 const auth = require("../routes/auth");
 
 //TEMPLATE APPLICATIONS
@@ -17,9 +16,6 @@ module.exports = function(app) {
   const prefix = "/api/v1/";
   app.use(express.json());
   app.use(`${prefix}auth`, auth);
-
-  //TEST ROUTE
-  app.use(`${prefix}testing`, testing);
 
   //TEMPLATE APPLICATIONS
   app.use(`${prefix}notifications`, notifications);
