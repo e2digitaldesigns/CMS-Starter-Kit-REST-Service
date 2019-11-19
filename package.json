@@ -1,0 +1,29 @@
+{
+  "name": "e2ps-rest-services",
+  "version": "1.0.0",
+  "description": "E2PS Rest Service",
+  "main": "e2ps-rest-services.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.16.4",
+    "js-md5": "^0.7.3",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^2.2.0",
+    "mongoose": "^5.7.8",
+    "morgan": "^1.9.1",
+    "mysql": "^2.17.1",
+    "nexmo": "^2.5.1",
+    "node-cache": "^4.2.0",
+    "nodemon": "^1.19.1",
+    "socket.io-client": "^2.3.0",
+    "underscore": "^1.9.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "C. Eugene Bey",
+  "license": "ISC"
+}
