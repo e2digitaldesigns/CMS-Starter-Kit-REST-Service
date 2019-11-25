@@ -38,7 +38,6 @@ app.get("/", (req, res) => {
 
 //CONNECT TO MONGO DB
 mongoose.connect(
-  // process.env.DB_CONNECTION,
   "mongodb+srv://e2ps:332310cb@e2ps-gnpyw.mongodb.net/e2-print-software?retryWrites=true&w=majority",
   { useNewUrlParser: true, useUnifiedTopology: true },
   () => {
@@ -46,5 +45,5 @@ mongoose.connect(
   }
 );
 
-const serverPort = process.env.PORT || process.env[process.env.MODE + "PORT"];
+const serverPort = process.env.PORT || 8001;
 app.listen(serverPort, () => console.log("E2PS REST API at ", serverPort));

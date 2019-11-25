@@ -3,14 +3,14 @@ const router = express.Router();
 const _ = require("underscore");
 const jwtDecode = require("jwt-decode");
 
-const e2psSocket = require("socket.io-client")(
-  process.env[process.env.MODE + "PUSH"],
-  {
-    secure: true,
-    reconnect: true,
-    rejectUnauthorized: false
-  }
-);
+//const push = "http://192.168.1.72:8002";
+const push = "https://e2ps-push.herokuapp.com";
+
+const e2psSocket = require("socket.io-client")(push, {
+  secure: true,
+  reconnect: true,
+  rejectUnauthorized: false
+});
 
 const StaffChatModel = require("../../models/StaffChat");
 const StaffMembersModel = require("../../models/StaffMembers");
@@ -20,8 +20,9 @@ router.get("/", globalFunctions.verifyToken, async (req, res) => {
   const staffMemberId = jwtDecode(req.token).result.staff_id;
 
   try {
-    const staffMembers = await StaffMembersModel.find({
-      child_id: jwtDecode(req.token).result.child_id
+    let staffMembers = await StaffMembersModel.find({
+      child_id: jwtDecode(req.token).result.child_id,
+      staff_id: { $ne: staffMemberId }
     });
 
     const chatMessages = await StaffChatModel.find({
@@ -32,7 +33,7 @@ router.get("/", globalFunctions.verifyToken, async (req, res) => {
 
     res.send(messages);
   } catch (err) {
-    res.error(err);
+    res.send(err);
   }
 });
 
@@ -137,7 +138,6 @@ const chatFilter = (staffId, contacts, messages) => {
 
     finalList.push({
       check: "",
-      // child_id: "e17647cd5cd845a1ea9cdc4ae52f3973",
       last_msg: messaging ? messaging.message : null,
       last_message_date: messaging
         ? messaging.time_stamp

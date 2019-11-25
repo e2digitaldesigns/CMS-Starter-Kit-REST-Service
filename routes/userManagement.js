@@ -5,13 +5,37 @@ const UsersModel = require("../models/UsersModel");
 const globalFunctions = require("../globalFunctions");
 
 //CREATE - POST
+router.post("/", globalFunctions.verifyToken, async (req, res) => {
+  const item = new UsersModel({
+    child_id: jwtDecode(req.token).result.child_id,
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password
+  });
+
+  try {
+    const checkCount = await UsersModel.findOne({
+      child_id: jwtDecode(req.token).result.child_id,
+      email: req.body.email
+    }).countDocuments();
+
+    if (checkCount === 0) {
+      const savedItem = await item.save();
+      res.json(savedItem);
+    } else {
+      res.json({ errorCode: 26, error: "email exist" });
+    }
+  } catch {
+    res.json({ errorCode: 30, error: "db error" });
+  }
+});
 
 //READ
 router.get("/", globalFunctions.verifyToken, async (req, res) => {
   try {
     const data = await UsersModel.find({
       child_id: jwtDecode(req.token).result.child_id
-    });
+    }).sort({ name: 1 });
     res.json(data);
   } catch (err) {
     res.json({ message: err });
@@ -22,7 +46,7 @@ router.get("/:id", globalFunctions.verifyToken, async (req, res) => {
   try {
     const data = await UsersModel.findOne({
       child_id: jwtDecode(req.token).result.child_id,
-      user_id: req.params.id
+      _id: req.params.id
     });
     res.send(data);
   } catch (err) {
@@ -30,4 +54,43 @@ router.get("/:id", globalFunctions.verifyToken, async (req, res) => {
   }
 });
 
+//Update
+router.put("/:id", globalFunctions.verifyToken, async (req, res) => {
+  try {
+    const updatedItems = await UsersModel.updateOne(
+      {
+        _id: req.params.id,
+        child_id: jwtDecode(req.token).result.child_id
+      },
+      {
+        $set: {
+          status: req.body.status,
+          name: req.body.name,
+          email: req.body.email
+        }
+      }
+    );
+
+    res.json(updatedItems);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
+
+//Update Status
+router.put("/status/:id", globalFunctions.verifyToken, async (req, res) => {
+  try {
+    const updatedItems = await UsersModel.updateOne(
+      {
+        _id: req.params.id,
+        child_id: jwtDecode(req.token).result.child_id
+      },
+      { $set: { status: req.body.status } }
+    );
+
+    res.json(updatedItems);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
 module.exports = router;

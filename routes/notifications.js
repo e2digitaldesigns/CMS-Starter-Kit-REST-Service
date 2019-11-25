@@ -6,6 +6,7 @@ const globalFunctions = require("../globalFunctions");
 
 //CREATE - POST
 router.post("/", globalFunctions.verifyToken, async (req, res) => {
+  console.log("new notification");
   const item = new NotificationModel({
     child_id: jwtDecode(req.token).result.child_id,
     staff_id: jwtDecode(req.token).result.staff_id,
