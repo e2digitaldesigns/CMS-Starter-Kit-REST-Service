@@ -3,8 +3,8 @@ const router = express.Router();
 const _ = require("underscore");
 const jwtDecode = require("jwt-decode");
 
-//const push = "http://192.168.1.72:8002";
-const push = "https://e2ps-push.herokuapp.com";
+const push = "http://192.168.1.72:8002";
+//const push = "https://e2ps-push.herokuapp.com";
 
 const e2psSocket = require("socket.io-client")(push, {
   secure: true,
