@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+console.clear();
 
 //MIDDLEWARES
 app.use(cors());

@@ -17,12 +17,12 @@ const StaffMembersModel = require("../../models/StaffMembers");
 const globalFunctions = require("../../globalFunctions");
 
 router.get("/", globalFunctions.verifyToken, async (req, res) => {
-  const staffMemberId = jwtDecode(req.token).result.staff_id;
+  const staffMemberId = jwtDecode(req.token).result._id;
 
   try {
     let staffMembers = await StaffMembersModel.find({
       child_id: jwtDecode(req.token).result.child_id,
-      staff_id: { $ne: staffMemberId }
+      _id: { $ne: staffMemberId }
     });
 
     const chatMessages = await StaffChatModel.find({
@@ -113,9 +113,9 @@ router.put("/seen/:id", globalFunctions.verifyToken, async (req, res) => {
 module.exports = router;
 
 const chatFilter = (staffId, contacts, messages) => {
-  const filteredMessages = _.sortBy(messages, "time_stamp").reverse(),
-    filteredContacts = contacts;
   let finalList = [];
+
+  let filteredMessages = _.sortBy(messages, "time_stamp").reverse();
 
   for (let i = 0; i < filteredMessages.length; i++) {
     if (filteredMessages[i].sender_id === staffId) {
@@ -125,33 +125,31 @@ const chatFilter = (staffId, contacts, messages) => {
     }
   }
 
-  const uniqueMessages = _.uniq(filteredMessages, function(f) {
+  filteredMessages = _.uniq(filteredMessages, function(f) {
     return f.referenceId;
   });
 
-  for (let i = 0; i < filteredContacts.length; i++) {
-    let contactStaffId = filteredContacts[i].staff_id;
+  for (let i = 0; i < contacts.length; i++) {
+    let contactStaffId = String(contacts[i]._id);
 
-    let messaging = uniqueMessages.find(
+    let msg = filteredMessages.find(
       ({ referenceId }) => referenceId === contactStaffId
     );
 
     finalList.push({
-      check: "",
-      last_msg: messaging ? messaging.message : null,
-      last_message_date: messaging
-        ? messaging.time_stamp
-        : new Date("25 Dec 2010"),
+      _id: contactStaffId,
+      staff_name: contacts[i].name,
+      online: 0,
       new_message_count: filteredMessages.filter(
         ({ referenceId, seen, sender_id }) =>
           referenceId === contactStaffId &&
           seen === false &&
           sender_id !== staffId
       ).length,
-      online: 0,
-      sender_id: messaging ? messaging.sender_id : null,
-      staff_id: contactStaffId,
-      staff_name: filteredContacts[i].name
+      last_msg: msg ? msg.message : "",
+      last_message_date: new Date("25 Dec 2010"),
+      sender_id: msg ? msg.sender_id : null,
+      check: null
     });
   }
 

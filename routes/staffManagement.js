@@ -41,7 +41,6 @@ router.get("/", globalFunctions.verifyToken, async (req, res) => {
 });
 
 router.get("/:id", globalFunctions.verifyToken, async (req, res) => {
-  console.log("st get");
   try {
     const data = await StaffMembersModel.findOne({
       child_id: jwtDecode(req.token).result.child_id,
@@ -56,7 +55,6 @@ router.get("/:id", globalFunctions.verifyToken, async (req, res) => {
 
 //Update
 router.put("/:id", globalFunctions.verifyToken, async (req, res) => {
-  console.log(req.body);
   try {
     const updatedItems = await StaffMembersModel.updateOne(
       {

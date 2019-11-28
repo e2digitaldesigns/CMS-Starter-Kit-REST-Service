@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const StaffMembersSchema = mongoose.Schema({
   child_id: { type: String, required: true },
-  staff_id: { type: String, required: true },
+  // staff_id: { type: String, required: true },
   status: { type: Boolean, default: true },
   name: { type: String, required: true },
   email: { type: String, required: true },
